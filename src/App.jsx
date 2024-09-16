@@ -1,9 +1,17 @@
 import React, { useState } from 'react'
 
 function App() {
- const[showForm ,setShowForm ]=  useState(false)
- const [formData , setFormData] = useState({category : "home" , title : ""  , description : ''})
- const [notes ,setNotes] = useState([ { category: 'Business', title: 'Finish the task on the board', description: 'Remember to finish task on the board. After finishing give for evaluation Matt.', date: '22.01.2023' }])
+ const [showForm ,setShowForm ]=  useState(false)
+ const [formData , setFormData] = useState({category : "home" , title : "", description : ''})
+ const [notes ,setNotes] = useState([])
+
+ useState(()=>{
+   fetch("http://localhost:4000")
+   .then(res => res.json())
+   .then(data => setNotes(data))
+   .catch(err => console.error(err))
+ },[])
+ 
  function inputHandle(e){
    const{value, id} =  e.target
    setFormData({...formData , [id] : value})
@@ -11,9 +19,30 @@ function App() {
 
  function formHandle(e){
     e.preventDefault()
-    setNotes([...notes , formData])
-    setShowForm(false)
+    fetch("http://localhost:4000/",{
+      method :  "POST" ,
+      body : JSON.stringify(formData),
+      headers : {
+        "content-Type" : "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(data => setNotes(data))
+    .catch(err => console.error(err))
+    setShowForm(false);
     setFormData({category : "home" , title : ""  , description : ''})
+ }
+ function handleNotes(e) {
+  const name =  e.target.getAttribute("name")
+  const word =   name.split("")
+  let select = word[word.length-1]
+  
+    if (select == 'e') {
+      console.log('edit')
+    }
+    if (select == 'd') {
+      console.log('delete')
+    }
  }
 
   return (
@@ -50,8 +79,8 @@ function App() {
               </span>
               <div className="ml-auto flex space-x-2 gap-5">
                 <input type="checkbox" name="" id="" />
-                <span className="material-symbols-outlined">edit</span>
-                <span className="material-symbols-outlined">delete</span>
+                <span name={index+"e"} onClick={handleNotes} className="material-symbols-outlined cursor-pointer">edit</span>
+                <span name={index+"d"} onClick={handleNotes} className="material-symbols-outlined cursor-pointer">delete</span>
               </div>
             </div>
             <h3 className="text-lg font-semibold mb-2">{note.title}</h3>
@@ -63,7 +92,7 @@ function App() {
     </div>
     <section className={showForm ? "show" : "hide"}>  
     <form className="max-w-md mx-auto p-4 bg-white shadow-md rounded" onSubmit={formHandle}>
-      <button className="absolute right-5 px-3 bg-orange-500 text-white"onClick={()=>{setShowForm(false)}}><span class="material-symbols-outlined">x</span></button>
+      <button className="absolute right-5 px-3 bg-orange-500 text-white"onClick={()=>{setShowForm(false)}}><span className="material-symbols-outlined">x</span></button>
         <h2 className="text-2xl font-bold mb-4">Add Notes</h2>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">Title</label>
