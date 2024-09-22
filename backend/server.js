@@ -16,8 +16,17 @@ app.get("/",(req, res)=>{
 
 app.post("/",(req , res )=>{
   const bodyData = req.body
-  notes.push(bodyData)
-  res.status(202).json(notes)
+  if (bodyData.ctg && bodyData.ctg == "all") {
+    res.status(202).json(notes)
+  }
+  const filterNotes = notes.filter(note => note.category.toLowerCase() == bodyData.ctg && bodyData.ctg.toLowerCase())
+  if (filterNotes.length > 0 ) {
+     return res.status(202).json(filterNotes)
+  }
+  if (bodyData.category && true) {
+     notes.push(bodyData)
+     return res.status(202).json(notes)
+  }
 })
 
 app.listen(port , ()=>{

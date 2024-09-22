@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 
 function App() {
  const [showForm ,setShowForm ]=  useState(false)
- const [formData , setFormData] = useState({category : "home" , title : "", description : ''})
+ const [addClass ,setAddClass ]=  useState("all")
+ const [formData , setFormData] = useState({category : "Home" , title : "", description : ''})
  const [notes ,setNotes] = useState([])
 
  useState(()=>{
@@ -30,7 +31,7 @@ function App() {
     .then(data => setNotes(data))
     .catch(err => console.error(err))
     setShowForm(false);
-    setFormData({category : "home" , title : ""  , description : ''})
+    setFormData({category : "Home" , title : ""  , description : ''})
  }
  function handleNotes(e) {
   const name =  e.target.getAttribute("name")
@@ -43,6 +44,22 @@ function App() {
     if (select == 'd') {
       console.log('delete')
     }
+ }
+ 
+ function noteCategory(e){
+   const ctg = e.target.id
+   setAddClass(ctg)
+   fetch("http://localhost:4000" , {
+    method : "POST" , 
+    body : JSON.stringify({ctg}),
+    headers :{
+      "content-Type" : "application/json"
+    }
+  })
+  .then(res => res.json())
+  .then(data => setNotes(data))
+  .catch(err => console.error(err))
+   
  }
 
   return (
@@ -59,11 +76,11 @@ function App() {
       </div>
       <h2 className="text-2xl font-semibold mb-4">Your notes</h2>
       <div className="flex items-center mb-4">
-        <nav className="flex space-x-4">
-          <a href="#" className="text-blue-500 border-b-2 border-blue-500 pb-1">ALL</a>
-          <a href="#" className="text-gray-500">PERSONAL</a>
-          <a href="#" className="text-gray-500">HOME</a>
-          <a href="#" className="text-gray-500">BUSINESS</a>
+        <nav className="flex space-x-4" onClick={noteCategory}>
+          <p id='all' className={`text-gray-500 cursor-pointer ${addClass == "all" && "active"}`}>ALL</p>
+          <p id='personal' className={`text-gray-500 cursor-pointer ${addClass == "personal" && "active"}`}>PERSONAL</p>
+          <p id='home' className={`text-gray-500 cursor-pointer ${addClass == "home" && "active"}`}>HOME</p>
+          <p id='business' className={`text-gray-500 cursor-pointer ${addClass == "business" && "active"}`}>BUSINESS</p>
         </nav>
         <div className="ml-auto flex items-center">
           <input type="checkbox" id="completed" className="mr-2" />
