@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 
 function App() {
- const [showForm ,setShowForm ]=  useState(false)
- const [addClass ,setAddClass ]=  useState("all")
- const [formData , setFormData] = useState({category : "Home" , title : "", description : ''})
+ const [showForm ,setShowForm ] =  useState(false)
+ const [addClass ,setAddClass ] =  useState("all")
+ const [formData , setFormData] =  useState({category : "Home" , title : "", description : ''})
  const [notes ,setNotes] = useState([])
-
+ 
  useState(()=>{
    fetch("http://localhost:4000")
    .then(res => res.json())
@@ -33,33 +33,28 @@ function App() {
     setShowForm(false);
     setFormData({category : "Home" , title : ""  , description : ''})
  }
- function handleNotes(e) {
-  const name =  e.target.getAttribute("name")
-  const word =   name.split("")
-  let select = word[word.length-1]
-  
-    if (select == 'e') {
-      console.log('edit')
-    }
-    if (select == 'd') {
-      console.log('delete')
-    }
+ function editNotes(e) {
+  const idx =  e.target.getAttribute("name")
+ }
+ function deleteNotes(e) {
+  const idx =  e.target.getAttribute("name")
+  // fetch("http:localhost:4000/",{
+  //   method : "DELETE" ,
+  //   body : JSON.stringify({idx}),
+  //   headers :{
+  //     "content-Type" : "application/json"
+  //   }
+  // })
+  // .then(res => res.json())
+  // .then(data => console.log(data))
+  // .catch(err => console.log(err))
  }
  
  function noteCategory(e){
    const ctg = e.target.id
    setAddClass(ctg)
-   fetch("http://localhost:4000" , {
-    method : "POST" , 
-    body : JSON.stringify({ctg}),
-    headers :{
-      "content-Type" : "application/json"
-    }
-  })
-  .then(res => res.json())
-  .then(data => setNotes(data))
-  .catch(err => console.error(err))
-   
+   const filterNotes = notes.filter( note => note.category.toLowerCase() == ctg.toLowerCase())
+   setNotes(filterNotes)   
  }
 
   return (
@@ -96,8 +91,8 @@ function App() {
               </span>
               <div className="ml-auto flex space-x-2 gap-5">
                 <input type="checkbox" name="" id="" />
-                <span name={index+"e"} onClick={handleNotes} className="material-symbols-outlined cursor-pointer">edit</span>
-                <span name={index+"d"} onClick={handleNotes} className="material-symbols-outlined cursor-pointer">delete</span>
+                <span name={index} onClick={editNotes} className="material-symbols-outlined cursor-pointer">edit</span>
+                <span name={index} onClick={deleteNotes} className="material-symbols-outlined cursor-pointer">delete</span>
               </div>
             </div>
             <h3 className="text-lg font-semibold mb-2">{note.title}</h3>
