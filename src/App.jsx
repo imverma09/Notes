@@ -1,23 +1,24 @@
 import React, { useState } from 'react'
-// import { all } from '../backend/router/notes'
 
 function App() {
  const [showForm ,setShowForm ] =  useState(false)
  const [addClass ,setAddClass ] =  useState("all")
+ const [updateValue ,setUpDateValue] = useState({title : "" , description : ''})
+ const [ search , setSearch ] = useState('')
  const [formData , setFormData] =  useState({category : "Home" , title : "", description : ''})
  const [notes ,setNotes] = useState([])
  const [completedNotes , setCompletedNotes] = useState(false)
  const [allChecked, setAllChecked] = useState([]);
-//  const [showNotes , setShowNotes] =useState([notes])
-//  let showNotes = addClass == 'all' ? notes : notes.filter( note => note.category.toLowerCase() == addClass.toLowerCase()) ; 
-
+ let showNotes = addClass == 'all' ? notes : notes.filter( note => note.category.toLowerCase() == addClass.toLowerCase()); 
+  
  useState(()=>{
    fetch("http://localhost:4000")
    .then(res => res.json())
    .then(data => setNotes(data))
    .catch(err => console.error(err))
+   localStorage.setItem('checked', JSON.stringify(allChecked))
  },[])
- 
+
  function handleChange(e) {
   if (e.target.checked) {
     setAllChecked((prev) => [...prev, e.target.id]);
@@ -31,8 +32,7 @@ function App() {
    setFormData({...formData , [id] : value})
  }
 
- function formHandle(e){
-   
+ function formHandle(e){  
    e.preventDefault()
    fetch("http://localhost:4000/",{
      method :  "POST" ,
@@ -49,38 +49,63 @@ function App() {
  }
  function editNotes(e) {
   const idx =  e.target.getAttribute("name")
+  const updateData =   notes.map((val) => val._id == idx ? {...val , isEdit : true } : val )
+  setNotes(updateData)
  }
  function deleteNotes(e) {
   const idx =  e.target.getAttribute("name")
-  // fetch("http:localhost:4000/",{
-  //   method : "DELETE" ,
-  //   body : JSON.stringify({idx}),
-  //   headers :{
-    //     "content-Type" : "application/json"
-    //   }
-  // })
-  // .then(res => res.json())
-  // .then(data => console.log(data))
-  // .catch(err => console.log(err))
+  fetch("http://localhost:4000",{
+    method : "DELETE" ,
+    body : JSON.stringify({idx}),
+    headers :{
+        "content-Type" : "application/json"
+      }
+  })
+  .then(res => res.json())
+  .then(data => setNotes([...data]))
+  .catch(err => console.log(err))
  }
- 
+ function searchHandle(e){
+  e.preventDefault();
+   const filterData = showNotes.filter((note)=>note.title.includes(search) || note.description.includes(search))
+   setNotes(filterData)
+ }
  function noteCategory(e){
    const ctg = e.target.id
    setAddClass(ctg) 
  }
+
 function completedNotesHandle(e){
   setCompletedNotes(e.target.checked)
-  const filterNotes =  showNotes.filter((val, idx)=> allChecked.includes(String(idx)))
-  // showNotes = filterNotes
+    console.log(completedNotes)
+     const filterNotes =  showNotes.filter((val, idx)=> allChecked.includes(String(idx)))
+    //  showNotes = filterNotes
+     console.log(filterNotes)
+  //  }
 
+}
+function updateNotes(){
+ console.log(updateValue)
+}
+function handleEdit(e){
+  const {id , value} =  e.target ;
+  setUpDateValue({...updateValue , [id] : value})
+}
+function updateCancel(e){
+  const idx =  e.target.getAttribute("name")
+  const updateData =   notes.map((val) => val._id == idx ? {...val , isEdit : false } : val )
+  setNotes(updateData)
 }
   return (
     <>
     <div className= {`p-10 border-2  bg-yellow-50 h-screen ${showForm && "opacity-40"}`}>
       <div className="flex justify-around items-center mb-4 ">
         <div className="relative w-1/2">
-          <input type="text" placeholder="Search" className="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <form action="" onSubmit={searchHandle}>
+          <input type="text" placeholder="Search" value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500" />
           <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">search</span>
+          <span className="material-symbols-outlined cursor-pointer absolute right-4 top-2.5 text-gray-400" onClick={()=> console.log("click") }>close</span>
+        </form>
         </div>
         <button onClick={()=>{setShowForm(!showForm)}} className="ml-4 bg-blue-500 text-white px-4 py-2 rounded-full flex items-center">
           <span className="material-symbols-outlined">add</span> Add
@@ -108,12 +133,23 @@ function completedNotesHandle(e){
               </span>
               <div className="ml-auto flex space-x-2 gap-5">
                 <input type="checkbox" name="" id={index} onChange={handleChange} />
-                <span name={index} onClick={editNotes} className="material-symbols-outlined cursor-pointer">edit</span>
-                <span name={index} onClick={deleteNotes} className="material-symbols-outlined cursor-pointer">delete</span>
+                <span name={note._id} onClick={editNotes} className="material-symbols-outlined cursor-pointer">edit</span>
+                <span name={note._id} onClick={deleteNotes} className="material-symbols-outlined cursor-pointer">delete</span>
               </div>
             </div>
-            <h3 className="text-lg font-semibold mb-2">{note.title}</h3>
-            <p className="text-gray-600 mb-2">{note.description}</p>
+            {
+              note.isEdit ? <>
+              <input type="text" id='title'  className='w-full outline-none' onChange={handleEdit}/>
+              <input type="text" id='description' className='w-full outline-none'onChange={handleEdit} />
+              <div className='flex justify-end gap-5 mt-4'>
+              <span className="material-symbols-outlined cursor-pointer" name={note._id} onClick={updateCancel}>close</span>
+              <span className="material-symbols-outlined cursor-pointer" onClick={updateNotes}>check</span>
+              </div>
+              </>:<>
+              <h3 className="text-lg font-semibold mb-2">{note.title}</h3>
+              <p className="text-gray-600 mb-2">{note.description}</p>
+              </>
+            }
             <p className="text-gray-400 text-sm">{note.date}</p>
           </div>
         ))}
@@ -121,7 +157,7 @@ function completedNotesHandle(e){
     </div>
     <section className={showForm ? "show" : "hide"}>  
     <form className="max-w-md mx-auto p-4 bg-white shadow-md rounded" onSubmit={formHandle}>
-      <span className="absolute right-5 px-3 bg-orange-500 text-white"onClick={()=>{setShowForm(false)}}><span className="material-symbols-outlined">x</span></span>
+      <span className="absolute right-5 px-3 bg-orange-500 text-white"onClick={()=>{setShowForm(false)}}><span className="material-symbols-outlined cursor-pointer">x</span></span>
         <h2 className="text-2xl font-bold mb-4">Add Notes</h2>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">Title</label>
