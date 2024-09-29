@@ -2,7 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const note = require('./router/notes')
-
+const update = require('./router/update')
 const app =  express()
 app.use(express.json())
 const port = 4000 ;
@@ -11,7 +11,10 @@ app.use(
       origin: "*",
     })
   );
+  
 app.use('/' , note)  
+
+app.use("/" ,update)
 
 mongoose.connect('mongodb://localhost:27017/notes')
 .then(()=>{
