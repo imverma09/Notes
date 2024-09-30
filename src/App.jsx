@@ -100,9 +100,6 @@ let showNotes = []
 function completedNotesHandle(e){
    const check =  e.target.checked;
    setAllChecked(check)
-  //  if (check) {
-  //   (notes.filter(val => val.isCompleted=="true"))
-  //  }
 }
 function updateNotes(e){
   const _id =  e.target.getAttribute("name")
@@ -162,7 +159,7 @@ function updateCancel(e){
                 {note.category}
               </span>
               <div className="ml-auto flex space-x-2 gap-5">
-                <input type="checkbox" name="" defaultChecked id={note._id} onChange={completedHandle} />
+                <input type="checkbox" name=""  id={note._id} onChange={completedHandle} />
                 <span name={note._id} onClick={editNotes} className="material-symbols-outlined cursor-pointer">edit</span>
                 <span name={note._id} onClick={deleteNotes} className="material-symbols-outlined cursor-pointer">delete</span>
               </div>
