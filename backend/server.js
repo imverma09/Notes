@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const note = require('./router/notes')
 const update = require('./router/update')
+const signUp =  require('./router/signUp')
+
 const app =  express()
 app.use(express.json())
 const port = 4000 ;
@@ -13,7 +15,7 @@ app.use(
   );
   
 app.use('/' , note)  
-
+app.use("/" , signUp)  
 app.use("/" ,update)
 
 mongoose.connect('mongodb://localhost:27017/notes')

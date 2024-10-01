@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 function SignUp() {
   const [formData, setFormData] = useState({
     name: '',
@@ -7,10 +7,24 @@ function SignUp() {
     email: '',
     password: '',
   });
-
+  const navigate = useNavigate()
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here
+    fetch('http://localhost:4000/sign',{
+      method : "POST",
+      body : JSON.stringify(formData),
+      headers : {
+        "Content-Type" : "application/json"
+      } 
+    })
+    .then(res =>{
+     if (res.ok) {
+      console.log('object')
+      navigate('/')
+     }  
+    })
+    .then(data => console.log(data))
+    .catch(err => console.log(err))
   };
 
   const handleChange = (e) => {

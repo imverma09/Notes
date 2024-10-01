@@ -5,9 +5,7 @@ const note = require('../model/notes')
 router.post("/checked", async(req , res )=>{
     const bodyData = req.body
     const find = {_id : bodyData._id}
-    let completed ;
-    bodyData.check? completed = { isCompleted : true } : completed = { isCompleted : false }
-    // const completed = 
+    let completed = bodyData.check?{ isCompleted : true } :{ isCompleted : false }
      try{
          const updateData = await note.findOneAndUpdate(find, completed)
          console.log(updateData)
