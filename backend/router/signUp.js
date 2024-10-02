@@ -2,17 +2,24 @@ const express = require('express')
 const route = express.Router()
 const user = require('../model/singUp')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const secret = 'QW!@AsZxer1%4#T^&*FCDT65$$#*)_+[[p;[]L>"}'
 route.post('/sign', async (req, res) => {
     const data = req.body
     try {
         const salt = await bcrypt.genSalt()
         const newPassword = await bcrypt.hash(data.password, salt)
         data.password = newPassword
-        await user.create(data)
-        await user.find()
+        const newUser = await user.create(data)
+        const token = jwt.sign({ _id: newUser._id }, secret)
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            maxAge: 15 * 60 * 1000
+        })
+        res.status(201).json({ message: "Welcome" })
     } catch (err) {
         if (err.code == 11000) {
-            res.status(401).json({ error: "Email And Number allReady exist ... !" })
+            return res.status(401).json({ error: "Email And Number allReady exist ... !" })
         }
         res.status(501).json({ error: "something wrong ! " })
     }
@@ -21,18 +28,43 @@ route.post('/sign', async (req, res) => {
 route.post('/login', async (req, res) => {
     const data = req.body
     try {
-        const find =  await user.findOne({ email: data.email })
+        const find = await user.findOne({ email: data.email })
         if (!find) {
             return res.status(401).json({ error: "invalid Email or password " })
         }
-        const match =  await bcrypt.compare(data.password, find.password)
+        const match = await bcrypt.compare(data.password, find.password)
         if (!match) {
             return res.status(401).json({ error: "invalid Email or password " })
         }
+        const token = jwt.sign({ _id: find._id }, secret)
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            maxAge: 15 * 60 * 1000
+        })
         res.status(202).json({ msg: "Welcome back " })
     } catch (error) {
         res.status(501).json({ error: "Something wrong  try again" })
     }
-    //   bcrypt.hash(data.password)
 })
+
+route.get('/check', async (req, res) => {
+    const token = req.cookies.jwt
+    if (token) {
+        return res.status(202).json({ message: "ok" })
+    }
+    try {
+        const data = jwt.verify(token, secret)
+        const user = await user.findById(data._id)
+        if (user) {
+            res.status(202).json({ message: "ok" })
+        } else {
+
+         res.status(401).json({ error: 'invalid token' })
+        }    
+    } catch (error) {
+        res.status(401).json({ error: 'invalid token' })
+        // console.log(error)
+    }
+})
+
 module.exports = route;

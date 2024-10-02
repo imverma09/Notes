@@ -4,13 +4,13 @@ const cors = require('cors')
 const note = require('./router/notes')
 const update = require('./router/update')
 const signUp =  require('./router/signUp')
-
 const app =  express()
 app.use(express.json())
 const port = 4000 ;
 app.use(
     cors({
       origin: "*",
+      credentials:true, 
     })
   );
   

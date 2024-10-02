@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function App() {
  const [showForm ,setShowForm ] =  useState(false)
@@ -8,9 +9,8 @@ function App() {
  const [formData , setFormData] =  useState({category : "Home" , title : "", description : '', isCompleted  : false})
  const [notes ,setNotes] = useState([])
  const [allChecked, setAllChecked] = useState(false);
-//  const [showNotes, setShowNotes] = useState([])
-//  let showNotes = addClass == 'all' ? allChecked ? notes.filter(note => note.isCompleted == "true") ? notes : notes.filter( note => note.category.toLowerCase() == addClass.toLowerCase()); 
-let showNotes = []
+ const navigate = useNavigate()
+ let showNotes = []
   if (addClass == 'all' && !allChecked || search !='') {
     showNotes = notes ;
   }else if(allChecked){
@@ -18,7 +18,18 @@ let showNotes = []
   }else{
     showNotes = notes.filter(note => note.category.toLowerCase() == addClass.toLowerCase())
   }
- useState(()=>{
+ useEffect(()=>{
+  fetch('http://localhost:4000/check',{
+    credentials : 'include'
+  })
+  .then((res) =>{
+    if (!res.ok) {
+      navigate('/login')
+    }
+  })
+  .catch((err)=>{
+    navigate('/login')
+  })
    fetch("http://localhost:4000")
    .then(res => res.json())
    .then(data => setNotes(data))
@@ -45,7 +56,6 @@ let showNotes = []
    const{value, id} =  e.target
    setFormData({...formData , [id] : value})
  }
-
  function formHandle(e){  
    e.preventDefault()
    fetch("http://localhost:4000/",{

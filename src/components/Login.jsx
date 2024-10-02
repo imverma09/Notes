@@ -13,7 +13,8 @@ function Login() {
       body : JSON.stringify(loginData),
       headers : {
         "Content-Type" : "application/json"
-      } 
+      } ,
+      credentials : 'include'
     })
     .then(res => {
      if (res.ok){

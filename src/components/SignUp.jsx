@@ -15,13 +15,16 @@ function SignUp() {
       body : JSON.stringify(formData),
       headers : {
         "Content-Type" : "application/json"
-      } 
+       },
+       credentials : 'include' 
     })
     .then(res =>{
-     if (res.ok) {
+
+     if(res.ok) {
       console.log('object')
       navigate('/')
      }  
+     return res.json()
     })
     .then(data => console.log(data))
     .catch(err => console.log(err))
