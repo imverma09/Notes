@@ -16,5 +16,6 @@ const schema =  mongoose.Schema({
     isCompleted :{
         type : String
     }
+    
 })
 module.exports = mongoose.model('note' , schema)

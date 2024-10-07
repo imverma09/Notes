@@ -1,18 +1,22 @@
 const express = require('express') 
 const mongoose = require('mongoose')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const note = require('./router/notes')
 const update = require('./router/update')
 const signUp =  require('./router/signUp')
 const app =  express()
-app.use(express.json())
+
 const port = 4000 ;
 app.use(
     cors({
-      origin: "*",
-      credentials:true, 
+      origin: "http://localhost:3000",
+      credentials: true, 
     })
   );
+
+  app.use(cookieParser());
+  app.use(express.json())
   
 app.use('/' , note)  
 app.use("/" , signUp)  

@@ -1,34 +1,34 @@
-import React, { useState ,} from 'react';
-import { Link , useNavigate } from 'react-router-dom';
+import React, { useState, } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
- const [loginData , setLoginData] = useState({email : "", password : "" })
- const [rememberMe , setRememberMe] = useState(false)
- const navigate = useNavigate()
+  const [loginData, setLoginData] = useState({ email: "", password: "" })
+  const [rememberMe, setRememberMe] = useState(false)
+  const navigate = useNavigate()
   const handleSubmit = (e) => {
-    loginData.rememberMe =rememberMe
+    loginData.rememberMe = rememberMe
     e.preventDefault();
-    fetch('http://localhost:4000/login',{
-      method : "POST",
-      body : JSON.stringify(loginData),
-      headers : {
-        "Content-Type" : "application/json"
-      } ,
-      credentials : 'include'
+    fetch('http://localhost:4000/login', {
+      method: "POST",
+      body: JSON.stringify(loginData),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: 'include'
     })
-    .then(res => {
-     if (res.ok){
-     console.log('object')
-      navigate('/')
-     }
-    })
-    .then(data => console.log(data))
-    .catch(err => console.log(err))
+      .then(res => {
+        if (res.ok) {
+          navigate('/')
+        }
+        return res.json()
+      })
+      .then(data => alert(data.msg))
+      .catch(err => console.log(err))
   };
-function handleInput(e){
-  const {id, value} =  e.target
-  setLoginData({...loginData , [id] : value})
-}
+  function handleInput(e) {
+    const { id, value } = e.target
+    setLoginData({ ...loginData, [id]: value })
+  }
 
   return (
     <div className="flex h-screen justify-center items-center bg-gray-100">
@@ -51,7 +51,7 @@ function handleInput(e){
             <span className="text-gray-700">Password*</span>
             <input
               type="password"
-              value={ loginData.password}
+              value={loginData.password}
               required
               onChange={handleInput}
               id='password'
@@ -64,7 +64,7 @@ function handleInput(e){
               type="checkbox"
               id='rememberMe'
               checked={rememberMe}
-              onChange={()=> setRememberMe(!rememberMe)}
+              onChange={() => setRememberMe(!rememberMe)}
               className="mr-2"
             />
             <span className="text-gray-700">Remember me</span>
