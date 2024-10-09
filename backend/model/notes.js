@@ -1,21 +1,24 @@
 const mongoose = require("mongoose")
-
-const schema =  mongoose.Schema({
-    category : {
-        type : String , 
-        require : true ,
+ 
+const subNotesSchema  = mongoose.Schema({
+    category: {
+        type: String,
+        required: true,
     },
-    description : {
-        type : String , 
-        require : true ,
+    description: {
+        type: String,
+        required: true,
     },
-    title : {
-        type : String , 
-        require : true ,
+    title: {
+        type: String,
+        required: true,
     },
-    isCompleted :{
-        type : String
-    }
-    
+    isCompleted: {
+        type: String
+    },
 })
-module.exports = mongoose.model('note' , schema)
+const schema = mongoose.Schema({
+    notes : [subNotesSchema],
+    userId : mongoose.Types.ObjectId, 
+})
+module.exports = mongoose.model('note', schema)

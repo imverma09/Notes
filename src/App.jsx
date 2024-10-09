@@ -29,13 +29,17 @@ function App() {
   })
   .catch((err)=>{
     navigate('/login')
+    console.log(err)
   })
   
-   fetch("http://localhost:4000")
+   fetch("http://localhost:4000",{
+    credentials : 'include'
+   })
    .then(res => res.json())
-   .then(data => setNotes(data))
+   .then(data =>{
+      setNotes(data[0].notes)
+   })
    .catch(err => console.error(err))
-  //  localStorage.setItem('checked', JSON.stringify(allChecked))
  },[])
 
  function completedHandle(e) {
@@ -46,7 +50,8 @@ function App() {
     body : JSON.stringify({_id , check}),
     headers : {
       "content-Type" : "application/json"
-    } 
+    } ,
+    credentials : 'include'
    })
    .then(res => res.json())
    .then(data => setNotes(data))
@@ -64,10 +69,11 @@ function App() {
      body : JSON.stringify(formData),
      headers : {
         "content-Type" : "application/json"
-      }
+      },
+      credentials : 'include'
     })
     .then(res => res.json())
-    .then(data => setNotes(data))
+    .then(data =>setNotes(data.notes))
     .catch(err => console.error(err))
     setShowForm(false);
     setFormData({category : "Home" , title : ""  , description : ''})
