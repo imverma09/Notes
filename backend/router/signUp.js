@@ -41,7 +41,7 @@ route.post('/login', async (req, res) => {
         const token = jwt.sign({ _id: find._id }, secret)
         res.cookie('jwt', token, {
             httpOnly: true,
-            maxAge: 30 * 60 * 1000
+            maxAge: 24*60* 60 * 60 * 1000
         })
         res.status(202).json({ msg: "Welcome back " })
     } catch (error) {
