@@ -18,7 +18,7 @@ route.post('/sign', async (req, res) => {
             httpOnly: true,
             maxAge: 15 * 60 * 1000
         })
-        res.status(201).json({ message: "Welcome" })
+        res.status(201).json(newUser)
     } catch (err) {
         if (err.code == 11000) {
             return res.status(401).json({ error: "Email And Number allReady exist ... !" })
@@ -41,9 +41,9 @@ route.post('/login', async (req, res) => {
         const token = jwt.sign({ _id: find._id }, secret)
         res.cookie('jwt', token, {
             httpOnly: true,
-            maxAge: 24*60* 60 * 60 * 1000
+            maxAge: 24 * 60 * 60 * 1000
         })
-        res.status(202).json({ msg: "Welcome back " })
+        res.status(202).json(find)
     } catch (error) {
         res.status(501).json({ error: "Something wrong  try again" })
     }
@@ -61,11 +61,22 @@ route.get('/check', async (req, res) => {
             res.status(202).json({ message: "ok" })
         } else {
 
-         res.status(401).json({ error: 'invalid token' })
-        }    
+            res.status(401).json({ error: 'invalid token' })
+        }
     } catch (error) {
         res.status(401).json({ error: 'invalid token' })
         // console.log(error)
+    }
+
+})
+route.get('/logout', async (req, res) => {
+    const token = req.cookies.jwt
+    if (token) {
+        res.clearCookie('jwt')
+        res.status(202).json({msg : "ok"})
+    }
+    else {
+        res.status(401).json({ error: 'you don not have any token to logout' })
     }
 })
 

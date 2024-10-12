@@ -11,6 +11,7 @@ function App() {
   const [allChecked, setAllChecked] = useState(false);
   const navigate = useNavigate()
   let showNotes = []
+
   if (addClass == 'all' && !allChecked || search != '') {
     showNotes = notes;
   } else if (allChecked) {
@@ -18,6 +19,7 @@ function App() {
   } else {
     showNotes = notes.filter(note => note.category.toLowerCase() == addClass.toLowerCase())
   }
+
   useEffect(() => {
     fetch('http://localhost:4000/check', {
       credentials: 'include'
@@ -42,20 +44,23 @@ function App() {
       .catch(err => console.error(err))
   }, [])
 
-  function completedHandle(e) {
+  async function completedHandle(e) {
     const check = e.target.checked
     const _id = e.target.id
-    fetch("http://localhost:4000/checked", {
-      method: "POST",
-      body: JSON.stringify({ _id, check }),
-      headers: {
-        "content-Type": "application/json"
-      },
-      credentials: 'include'
-    })
-      .then(res => res.json())
-      .then(data => setNotes(data))
-      .catch(err => console.log(err))
+    const myID = localStorage.getItem('myID')
+    try {
+      const res = await fetch("http://localhost:4000/checked/" + myID, {
+        method: "POST",
+        body: JSON.stringify({ _id, check }),
+        headers: {
+          "content-Type": "application/json"
+        },
+      })
+      const data = await res.json()
+      setNotes(data.notes)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   function inputHandle(e) {
@@ -99,7 +104,7 @@ function App() {
       headers: {
         "content-Type": "application/json"
       },
-      credentials: 'include' 
+      credentials: 'include'
 
     })
       .then(res => res.json())
@@ -108,11 +113,14 @@ function App() {
   }
   function searchHandle(e) {
     e.preventDefault();
-    const filterData = showNotes.filter((note) => note.title.includes(search) || note.description.includes(search))
-    setNotes(filterData)
+    showNotes = showNotes.filter((note) => note.title.includes(search) || note.description.includes(search))
   }
   function noteCategory(e) {
+
     const ctg = e.target.id
+    if (ctg == '') {
+      return
+    }
     setAddClass(ctg)
   }
 
@@ -122,15 +130,19 @@ function App() {
   }
   function updateNotes(e) {
     const _id = e.target.getAttribute("name")
+    updateValue.id = _id;
     fetch("http://localhost:4000/updateNotes", {
       method: "PUT",
-      body: JSON.stringify([{ _id }, updateValue]),
+      body: JSON.stringify(updateValue),
       headers: {
         "content-Type": "application/json"
-      }
+      },
+      credentials: 'include'
     })
-      .then(res => res.json())
-      .then(data => setNotes([...data]))
+      .then(res => {
+        return res.json()
+      })
+      .then(data => setNotes(data.notes))
       .catch(err => console.log(err))
   }
   function handleEdit(e) {
@@ -141,6 +153,20 @@ function App() {
     const idx = e.target.getAttribute("name")
     const updateData = notes.map((val) => val._id == idx ? { ...val, isEdit: false } : val)
     setNotes(updateData)
+  }
+  const logout = async () => {
+    try {
+      const res = await fetch('http://localhost:4000/logout', {
+        credentials: 'include'
+      })
+      const data = await res.json()
+      if (res.ok) {
+        console.log('hello')
+        navigate('/login')
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   return (
     <>
@@ -156,6 +182,7 @@ function App() {
           <button onClick={() => { setShowForm(!showForm) }} className="ml-4 bg-blue-500 text-white px-4 py-2 rounded-full flex items-center">
             <span className="material-symbols-outlined">add</span> Add
           </button>
+          <button onClick={logout}><span className="material-symbols-outlined">logout</span></button>
         </div>
         <h2 className="text-2xl font-semibold mb-4">Your notes</h2>
         <div className="flex items-center mb-4">

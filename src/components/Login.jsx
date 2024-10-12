@@ -5,25 +5,26 @@ function Login() {
   const [loginData, setLoginData] = useState({ email: "", password: "" })
   const [rememberMe, setRememberMe] = useState(false)
   const navigate = useNavigate()
-  const handleSubmit = (e) => {
+  const handleSubmit =  async(e) => {
     loginData.rememberMe = rememberMe
     e.preventDefault();
-    fetch('http://localhost:4000/login', {
-      method: "POST",
-      body: JSON.stringify(loginData),
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: 'include'
-    })
-      .then(res => {
-        if (res.ok) {
-          navigate('/')
-        }
-        return res.json()
+    try {   
+     const res = await fetch('http://localhost:4000/login', {
+        method: "POST",
+        body: JSON.stringify(loginData),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include'
       })
-      .then(data => alert(data.msg))
-      .catch(err => console.log(err))
+      const user = await res.json()
+      if(res.ok) {
+       localStorage.setItem("myID",user._id )
+       navigate('/')
+      }  
+    } catch(err){
+      console.log(err) ;
+    }
   };
   function handleInput(e) {
     const { id, value } = e.target

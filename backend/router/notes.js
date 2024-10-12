@@ -7,7 +7,7 @@ const secret = 'QW!@AsZxer1%4#T^&*FCDT65$$#*)_+[[p;[]L>"}'
 router.get("/", async (req, res) => {
     const token = req.cookies.jwt
     if (!token) {
-        return res.status(402).json({ msg: " something wrong" })
+        return res.status(401).json({ msg: " something wrong" })
     }
     try {
         const cookieData = await jwt.verify(token, secret)

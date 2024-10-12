@@ -19,12 +19,12 @@ function SignUp() {
        credentials : 'include' 
     })
     .then(res =>{
-
+       const user =  res.json()
      if(res.ok) {
-      console.log('object')
+      localStorage.setItem("myID",user._id )
       navigate('/')
      }  
-     return res.json()
+     return user
     })
     .then(data => console.log(data))
     .catch(err => console.log(err))
