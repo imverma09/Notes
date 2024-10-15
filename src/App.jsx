@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { json, useNavigate } from 'react-router-dom'
 
 function App() {
   const [showForm, setShowForm] = useState(false)
@@ -8,9 +8,11 @@ function App() {
   const [search, setSearch] = useState('')
   const [formData, setFormData] = useState({ category: "Home", title: "", description: '', isCompleted: false })
   const [notes, setNotes] = useState([])
+  const [cancel, setCancel] = useState(true)
   const [allChecked, setAllChecked] = useState(false);
   const navigate = useNavigate()
   let showNotes = []
+  // const [showNotes , setShowNotes] = useState(notes)
 
   if (addClass == 'all' && !allChecked || search != '') {
     showNotes = notes;
@@ -33,16 +35,18 @@ function App() {
         navigate('/login')
         console.log(err)
       })
-
-    fetch("http://localhost:4000", {
-      credentials: 'include'
-    })
-      .then(res => res.json())
-      .then(data => {
-        setNotes(data[0].notes)
-      })
-      .catch(err => console.error(err))
   }, [])
+
+  useEffect(() => {
+      fetch("http://localhost:4000", {
+        credentials: 'include'
+      })
+        .then(res => res.json())
+        .then(data => {
+          setNotes(data[0].notes)
+        })
+        .catch(err => console.error(err))
+  } , [cancel])
 
   async function completedHandle(e) {
     const check = e.target.checked
@@ -113,10 +117,10 @@ function App() {
   }
   function searchHandle(e) {
     e.preventDefault();
-    showNotes = showNotes.filter((note) => note.title.includes(search) || note.description.includes(search))
+    const filterData = notes.filter((note) => note.title.includes(search) || note.description.includes(search))
+    setNotes(filterData)
   }
   function noteCategory(e) {
-
     const ctg = e.target.id
     if (ctg == '') {
       return
@@ -176,13 +180,13 @@ function App() {
             <form action="" onSubmit={searchHandle}>
               <input type="text" placeholder="Search" value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">search</span>
-              <span className="material-symbols-outlined cursor-pointer absolute right-4 top-2.5 text-gray-400" onClick={() => setSearch('')}>close</span>
+              <span className="material-symbols-outlined cursor-pointer absolute right-4 top-2.5 text-gray-400" onClick={() => {setCancel(!cancel), setSearch('')}}>close</span>
             </form>
           </div>
           <button onClick={() => { setShowForm(!showForm) }} className="ml-4 bg-blue-500 text-white px-4 py-2 rounded-full flex items-center">
             <span className="material-symbols-outlined">add</span> Add
           </button>
-          <button onClick={logout}><span className="material-symbols-outlined">logout</span></button>
+          <button onClick={logout}><span className="material-symbols-outlined"><abbr className='no-underline' title="Logout"> logout</abbr></span></button>
         </div>
         <h2 className="text-2xl font-semibold mb-4">Your notes</h2>
         <div className="flex items-center mb-4">
@@ -229,7 +233,7 @@ function App() {
         </div>
       </div>
       <section className={showForm ? "show" : "hide"}>
-        <form className="max-w-md mx-auto p-4 bg-white shadow-md rounded" onSubmit={formHandle}>
+        <form className="max-w-md mx-auto p-4 bg-white shadow-md " onSubmit={formHandle}>
           <span className="absolute right-5 px-3 bg-orange-500 text-white" onClick={() => { setShowForm(false) }}><span className="material-symbols-outlined cursor-pointer">x</span></span>
           <h2 className="text-2xl font-bold mb-4">Add Notes</h2>
           <div className="mb-4">
