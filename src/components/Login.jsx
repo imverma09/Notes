@@ -9,7 +9,7 @@ function Login() {
     loginData.rememberMe = rememberMe
     e.preventDefault();
     try {   
-     const res = await fetch('http://localhost:4000/login', {
+     const res = await fetch('https://notes-2-x7kd.onrender.com/login', {
         method: "POST",
         body: JSON.stringify(loginData),
         headers: {

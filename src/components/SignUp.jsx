@@ -11,7 +11,7 @@ function SignUp() {
   const navigate = useNavigate()
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('http://localhost:4000/sign',{
+    fetch('https://notes-2-x7kd.onrender.com/sign',{
       method : "POST",
       body : JSON.stringify(formData),
       headers : {

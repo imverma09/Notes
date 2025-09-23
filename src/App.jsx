@@ -23,7 +23,7 @@ function App() {
   }
 
   useEffect(() => {
-    fetch('http://localhost:4000/check', {
+    fetch('https://notes-2-x7kd.onrender.com/check', {
       credentials: 'include'
     })
       .then((res) => {
@@ -38,7 +38,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-      fetch("http://localhost:4000", {
+      fetch("https://notes-2-x7kd.onrender.com/", {
         credentials: 'include'
       })
         .then(res => res.json())
@@ -53,7 +53,7 @@ function App() {
     const _id = e.target.id
     const myID = localStorage.getItem('myID')
     try {
-      const res = await fetch("http://localhost:4000/checked/" + myID, {
+      const res = await fetch("https://notes-2-x7kd.onrender.com/checked/" + myID, {
         method: "POST",
         body: JSON.stringify({ _id, check }),
         headers: {
@@ -73,7 +73,7 @@ function App() {
   }
   function formHandle(e) {
     e.preventDefault()
-    fetch("http://localhost:4000/", {
+    fetch("https://notes-2-x7kd.onrender.com/", {
       method: "POST",
       body: JSON.stringify(formData),
       headers: {
@@ -102,7 +102,7 @@ function App() {
   }
   function deleteNotes(e) {
     const idx = e.target.getAttribute("name")
-    fetch("http://localhost:4000", {
+    fetch("https://notes-2-x7kd.onrender.com/", {
       method: "DELETE",
       body: JSON.stringify({ idx }),
       headers: {
@@ -135,7 +135,7 @@ function App() {
   function updateNotes(e) {
     const _id = e.target.getAttribute("name")
     updateValue.id = _id;
-    fetch("http://localhost:4000/updateNotes", {
+    fetch("https://notes-2-x7kd.onrender.com/updateNotes", {
       method: "PUT",
       body: JSON.stringify(updateValue),
       headers: {
@@ -160,7 +160,7 @@ function App() {
   }
   const logout = async () => {
     try {
-      const res = await fetch('http://localhost:4000/logout', {
+      const res = await fetch('https://notes-2-x7kd.onrender.com/logout', {
         credentials: 'include'
       })
       const data = await res.json()
