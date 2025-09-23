@@ -15,14 +15,14 @@ app.use(
     })
   );
 
-  app.use(cookieParser());
-  app.use(express.json())
+app.use(cookieParser());
+app.use(express.json())
   
 app.use('/' , note)  
 app.use("/" , signUp)  
 app.use("/" ,update)
 
-mongoose.connect('mongodb://localhost:27017/notes')
+mongoose.connect('mongodb+srv://imverma45_db_user:QT6BXgMj6CTE1HtA@cluster0.br2cn52.mongodb.net/')
 .then(()=>{
   app.listen(port , ()=>{
       console.log('server start ' + port);
