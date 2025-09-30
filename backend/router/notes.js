@@ -49,7 +49,6 @@ router.post("/", async (req, res) => {
             { upsert: true }
         )
         const data = await note.findOne({ userId: originalCookie._id })
-        // console.log(data)
         res.status(202).json(data)
     } catch (err) {
         console.error(err)

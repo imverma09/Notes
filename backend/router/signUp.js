@@ -4,7 +4,7 @@ const user = require('../model/singUp')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const secret = 'QW!@AsZxer1%4#T^&*FCDT65$$#*)_+[[p;[]L>"}'
-// const app =  express()
+
 
 route.post('/sign', async (req, res) => {
     const data = req.body
@@ -56,11 +56,13 @@ route.get('/check', async (req, res) => {
     }
     try {
         const data = await jwt.verify(token, secret)
+        console.log(data)
         const user2 = await user.findById(data._id)
+        console.log(user2)
         if (user2) {
             res.status(202).json({ message: "ok" })
-        } else {
-
+        } 
+        else {
             res.status(401).json({ error: 'invalid token' })
         }
     } catch (error) {

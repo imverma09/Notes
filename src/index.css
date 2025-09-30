@@ -10,7 +10,7 @@
  top: 50%;
  left: 50%;
  transform: translate(-50% , -50%);
- width: 30%;
+ /* width: 30%; */
 }
 .active{
     border-bottom:2px solid rgb(59 ,130 ,239);

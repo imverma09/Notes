@@ -2,14 +2,18 @@ import React, { useState, } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
+   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" })
   const [rememberMe, setRememberMe] = useState(false)
   const navigate = useNavigate()
+    // let BACKEND_API = "http://localhost:4000"
+  let BACKEND_API = "https://notes-2-x7kd.onrender.com"
   const handleSubmit =  async(e) => {
     loginData.rememberMe = rememberMe
     e.preventDefault();
     try {   
-     const res = await fetch('https://notes-2-x7kd.onrender.com/login', {
+      setLoading(true)
+     const res = await fetch(`${BACKEND_API}/login`, {
         method: "POST",
         body: JSON.stringify(loginData),
         headers: {
@@ -24,6 +28,8 @@ function Login() {
       }  
     } catch(err){
       console.log(err) ;
+    }finally{
+      setLoading(false)
     }
   };
   function handleInput(e) {
@@ -71,11 +77,45 @@ function Login() {
             <span className="text-gray-700">Remember me</span>
           </div>
           <button
+      type="submit"
+     
+      disabled={loading}
+      className="flex justify-center items-center gap-1 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full active:scale-95 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+    >
+      {loading ? (
+        <>
+          <svg
+            className="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          Loading...
+        </>
+      ) : (
+        "Login"
+      )}
+    </button>
+          {/* <button
             type="submit"
             className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full"
           >
             Login
-          </button>
+          </button> */}
           <p className="text-sm text-gray-700 mt-2">
             Don't have an account? <Link to="/signUp" className="text-blue-600 hover:text-blue-800">Sign up</Link>
           </p>

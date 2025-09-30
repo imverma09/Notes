@@ -12,6 +12,8 @@ function App() {
   const [allChecked, setAllChecked] = useState(false);
   const navigate = useNavigate()
   let showNotes = []
+  // let BACKEND_API = "http://localhost:4000"
+  let BACKEND_API = "https://notes-2-x7kd.onrender.com"
   // const [showNotes , setShowNotes] = useState(notes)
 
   if (addClass == 'all' && !allChecked || search != '') {
@@ -23,7 +25,7 @@ function App() {
   }
 
   useEffect(() => {
-    fetch('https://notes-2-x7kd.onrender.com/check', {
+    fetch(`${BACKEND_API}/check`, {
       credentials: 'include'
     })
       .then((res) => {
@@ -38,7 +40,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-      fetch("https://notes-2-x7kd.onrender.com/", {
+      fetch(`${BACKEND_API}/`, {
         credentials: 'include'
       })
         .then(res => res.json())
@@ -52,16 +54,19 @@ function App() {
     const check = e.target.checked
     const _id = e.target.id
     const myID = localStorage.getItem('myID')
+
     try {
-      const res = await fetch("https://notes-2-x7kd.onrender.com/checked/" + myID, {
-        method: "POST",
-        body: JSON.stringify({ _id, check }),
-        headers: {
-          "content-Type": "application/json"
-        },
-      })
-      const data = await res.json()
-      setNotes(data.notes)
+      if (myID) {
+        const res = await fetch(`${BACKEND_API}` + myID, {
+          method: "POST",
+          body: JSON.stringify({ _id, check }),
+          headers: {
+            "content-Type": "application/json"
+          },
+        })
+        const data = await res.json()
+        setNotes(data.notes)
+      }
     } catch (err) {
       console.log(err)
     }
@@ -73,7 +78,7 @@ function App() {
   }
   function formHandle(e) {
     e.preventDefault()
-    fetch("https://notes-2-x7kd.onrender.com/", {
+    fetch(`${BACKEND_API}/`, {
       method: "POST",
       body: JSON.stringify(formData),
       headers: {
@@ -102,7 +107,7 @@ function App() {
   }
   function deleteNotes(e) {
     const idx = e.target.getAttribute("name")
-    fetch("https://notes-2-x7kd.onrender.com/", {
+    fetch(`${BACKEND_API}/`, {
       method: "DELETE",
       body: JSON.stringify({ idx }),
       headers: {
@@ -135,7 +140,7 @@ function App() {
   function updateNotes(e) {
     const _id = e.target.getAttribute("name")
     updateValue.id = _id;
-    fetch("https://notes-2-x7kd.onrender.com/updateNotes", {
+    fetch(`${BACKEND_API}/updateNotes`, {
       method: "PUT",
       body: JSON.stringify(updateValue),
       headers: {
@@ -160,7 +165,7 @@ function App() {
   }
   const logout = async () => {
     try {
-      const res = await fetch('https://notes-2-x7kd.onrender.com/logout', {
+      const res = await fetch(`${BACKEND_API}/logout`, {
         credentials: 'include'
       })
       const data = await res.json()
