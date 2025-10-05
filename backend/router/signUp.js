@@ -16,6 +16,8 @@ route.post('/sign', async (req, res) => {
         const token = jwt.sign({ _id: newUser._id }, secret)
         res.cookie('jwt', token, {
             httpOnly: true,
+            secure : true , 
+            sameSite: "None",
             maxAge: 15 * 60 * 1000
         })
         res.status(201).json(newUser)
@@ -41,6 +43,8 @@ route.post('/login', async (req, res) => {
         const token = jwt.sign({ _id: find._id }, secret)
         res.cookie('jwt', token, {
             httpOnly: true,
+            secure: true,
+            sameSite: "None",
             maxAge: 24 * 60 * 60 * 1000
         })
         res.status(202).json(find)
@@ -55,10 +59,8 @@ route.get('/check', async (req, res) => {
         return res.status(401).json({ error: "invalid" })
     }
     try {
-        const data = await jwt.verify(token, secret)
-        console.log(data)
+        const data =  jwt.verify(token, secret)
         const user2 = await user.findById(data._id)
-        console.log(user2)
         if (user2) {
             res.status(202).json({ message: "ok" })
         } 
@@ -74,7 +76,11 @@ route.get('/check', async (req, res) => {
 route.get('/logout', async (req, res) => {
     const token = req.cookies.jwt
     if (token) {
-        res.clearCookie('jwt')
+        res.clearCookie('jwt',{
+            httpOnly : true , 
+            secure : true , 
+            sameSite : "none"
+        })
         res.status(202).json({msg : "ok"})
     }
     else {
