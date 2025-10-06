@@ -1,11 +1,11 @@
 // 
 import React, { useEffect, useState } from 'react';
-import { json, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
-  const BACKEND_API = "https://notes-2-x7kd.onrender.com";
   const navigate = useNavigate();
-
+  // const BACKEND_API = "https://notes-2-x7kd.onrender.com";
+    let BACKEND_API = "http://localhost:4000";
   // State management
   const [showForm, setShowForm] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
@@ -153,6 +153,10 @@ function App() {
 
   // Handle note deletion
   const handleDeleteNote = (e) => {
+   const ans =   confirm("Are You Sure ! ")
+   if (!ans) {
+    return  
+   }
     const noteId = e.target.getAttribute("name");
     fetch(`${BACKEND_API}/`, {
       method: "DELETE",
@@ -225,6 +229,7 @@ function App() {
 
   // Handle logout
   const handleLogout = async () => {
+    
     try {
       const res = await fetch(`${BACKEND_API}/logout`, {
         credentials: 'include'
@@ -308,17 +313,7 @@ function App() {
               BUSINESS
             </p>
           </nav>
-          <div className="ml-auto flex items-center">
-            <input
-              type="checkbox"
-              id="completed"
-              className="mr-2"
-              onChange={handleShowCompletedToggle}
-            />
-            <label htmlFor="completed" className="text-gray-500">
-              Show only completed notes
-            </label>
-          </div>
+          
         </div>
 
         {/* Notes Grid */}
@@ -341,12 +336,7 @@ function App() {
                   {note.category}
                 </span>
                 <div className="ml-auto flex space-x-2 gap-5">
-                  <input
-                    type="checkbox"
-                    id={note._id}
-                    onChange={handleCompletionToggle}
-                    checked={note.isCompleted === 'true'}
-                  />
+                
                   <span
                     name={note._id}
                     onClick={handleEditNote}
