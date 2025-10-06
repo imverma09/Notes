@@ -6,8 +6,8 @@ function Login() {
   const [loginData, setLoginData] = useState({ email: "", password: "" })
   const [rememberMe, setRememberMe] = useState(false)
   const navigate = useNavigate()
-    let BACKEND_API = "http://localhost:4000"
-  // let BACKEND_API = "https://notes-2-x7kd.onrender.com"
+    // let BACKEND_API = "http://localhost:4000"
+  let BACKEND_API = "https://notes-2-x7kd.onrender.com"
   const handleSubmit =  async(e) => {
     loginData.rememberMe = rememberMe
     e.preventDefault();

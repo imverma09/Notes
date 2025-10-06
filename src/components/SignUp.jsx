@@ -9,8 +9,8 @@ function SignUp() {
     password: "",
   });
   const [visibility, setVisibility] = useState(true);
-  let BACKEND_API = "http://localhost:4000";
-  // let BACKEND_API = "https://notes-2-x7kd.onrender.com"
+  // let BACKEND_API = "http://localhost:4000";
+  let BACKEND_API = "https://notes-2-x7kd.onrender.com"
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();

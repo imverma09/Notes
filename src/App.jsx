@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 function App() {
   const navigate = useNavigate();
-  // const BACKEND_API = "https://notes-2-x7kd.onrender.com";
-    let BACKEND_API = "http://localhost:4000";
+  const BACKEND_API = "https://notes-2-x7kd.onrender.com";
+    // let BACKEND_API = "http://localhost:4000";
   // State management
   const [showForm, setShowForm] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
